@@ -1,0 +1,1016 @@
+<!--
+  Copyright 2021 Google LLC
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Locator</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/handlebars/4.7.7/handlebars.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .gm-style .gm-style-iw-c {
+      padding: 0!important;
+    }
+
+    .gm-ui-hover-effect {
+      display: none!important;
+    }
+
+    .gm-style-iw-d {
+      overflow: unset!important;
+    }
+
+    #map-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      font-family: "Gilroy", sans-serif;
+      box-sizing: border-box;
+    }
+
+    #map-container button {
+      /*background: none;*/
+      /*color: inherit;*/
+      border: none;
+      padding: 0;
+      /*font: inherit;*/
+      /*font-size: inherit;*/
+      /*cursor: pointer;*/
+    }
+
+    #map {
+      position: absolute;
+      /*MAKE IT RESPONSIVE*/
+      left: 500px;
+      top: 20px;
+      right: 8px;
+      bottom: 8px;
+      border-radius: 8px;
+    }
+
+    #locations-panel {
+      position: absolute;
+      left: 0;
+      /*MAKE IT RESPONSIVE*/
+      width: 480px;
+      /*width: 22em;*/
+      top: 0;
+      bottom: 0;
+      /*overflow-y: auto;*/
+      background: white;
+      padding: 0.5em;
+      /*box-sizing: border-box;*/
+    }
+
+
+    @media only screen and (max-width: 876px) {
+      #map {
+        left: 0;
+        bottom: 50%;
+      }
+
+      #locations-panel {
+        top: 50%;
+        right: 0;
+        width: unset;
+      }
+    }
+
+    #locations-panel-list > header {
+      /*padding: 1.4em 1.4em 0 1.4em;*/
+    }
+
+    #locations-panel-list h1.search-title {
+      font-size: 1em;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    /*#locations-panel-list h1.search-title > img {*/
+    /*  vertical-align: bottom;*/
+    /*  margin-top: -1em;*/
+    /*}*/
+
+    #locations-panel-list .search-input {
+      width: 100%;
+      margin-top: 0.8em;
+      margin-bottom: 12px;
+      position: relative;
+      /*height: 56px;*/
+      /*!* Ash/200 *!*/
+
+      /*background: #F9FAFB;*/
+      /*!* Ash/400 *!*/
+
+      /*border: 1px solid #E2E7EE;*/
+      /*box-sizing: border-box;*/
+      /*border-radius: 4px;*/
+    }
+
+    #locations-panel-list .search-input input {
+      width: 100%;
+      /*height: 2.2em;*/
+      /*padding: 0 2.5em 0 1em;*/
+      padding: 0 1em 0 44px;
+      /*font-size: 1em;*/
+      height: 56px;
+
+      /* Ash/200 */
+      background: #F9FAFB;
+      /* Ash/400 */
+      border: 1px solid #E2E7EE;
+      box-sizing: border-box;
+      border-radius: 4px;
+
+
+      /* 16R */
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      /*line-height: 24px;*/
+      /* identical to box height, or 150% */
+
+      /* Coal/500 */
+      color: #788697;
+    }
+
+    #locations-panel-list .search-input input:focus {
+      background: #FFFF;
+      color: #29313A;
+      border: 2px solid #2F8FE3;
+    }
+
+    #locations-panel-list .search-input-overlay {
+      position: absolute;
+    }
+
+    #locations-panel-list .search-input-overlay.search {
+      /*right: 2px;*/
+      /*left: 0px;*/
+      top: 2px;
+      bottom: 2px;
+      width: 44px;
+    }
+
+    #locations-panel-list .search-input-overlay.search button {
+      width: 100%;
+      height: 100%;
+      border-radius: 0.2em;
+      color: #4F5862;
+      background: transparent;
+    }
+
+    #locations-panel-list .search-input-overlay.search .icon {
+      margin-top: 0.05em;
+      vertical-align: top;
+    }
+
+    #locations-panel-list .section-name {
+      font-weight: 500;
+      font-size: 0.9em;
+      margin: 1.8em 0 1em 1.5em;
+    }
+
+    #locations-panel-list .location-result {
+      position: relative;
+      /*padding: 0.8em 1.4em 0.8em 1.4em;*/
+      padding: 12px 12px 12px 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+      cursor: pointer;
+
+      display: flex;
+      align-items: center;
+    }
+
+    /*#locations-panel-list .location-result:first-of-type {*/
+    /*  border-top: 1px solid rgba(0, 0, 0, 0.12);*/
+    /*}*/
+
+    #locations-panel-list .location-result:last-of-type {
+      border-bottom: none;
+    }
+
+    #locations-panel-list .location-result.selected {
+      /*outline: 2px solid #4285f4;*/
+      background: #F7FAFF;
+    }
+
+    #locations-panel-list button.select-location {
+      background: none;
+      margin-bottom: 4px;
+      text-align: left;
+    }
+
+    #locations-panel-list .location-result div.name {
+      /*font-size: 1em;*/
+      /*font-weight: 500;*/
+      /*margin: 0;*/
+      /* 20B */
+      font-family: Gilroy, sans-serif;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 20px;
+      line-height: 28px;
+      /* identical to box height, or 140% */
+
+
+      /* Coal/700 */
+
+      color: #29313A;
+
+    }
+
+    #locations-panel-list .location-result .address {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      position: relative;
+      left: -4px;
+      /*font-size: 0.9em;*/
+      /*margin-bottom: 0.5em;*/
+      /* 16R */
+      font-family: Gilroy, sans-serif;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 24px;
+      /* identical to box height, or 150% */
+
+      /* Coal/600 */
+      color: #4F5862;
+    }
+
+    #locations-panel-list .location-labels {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    #locations-panel-list .location-labels div {
+      padding: 6px 8px;
+      /* Ash/500 */
+      border: 1px solid #CDD6E1;
+      box-sizing: border-box;
+      border-radius: 4px;
+      height: 32px;
+    }
+
+    #locations-panel-list .location-labels div.blue-text {
+      /* Navi/400 */
+      color: #1475CA;
+    }
+
+    #locations-panel-list .location-labels div.blue-background {
+      /* Navi/50 */
+      background: #EFF7FC;
+    }
+
+    #locations-panel-list .location-result .distance {
+      position: absolute;
+      top: 0.9em;
+      right: 0;
+      text-align: center;
+      font-size: 0.9em;
+      width: 5em;
+    }
+
+    #location-results-list {
+      list-style-type: none;
+      margin: 0;
+      padding: 12px 22px 12px 10px;
+      border: 1px solid #CDD6E1;
+      box-sizing: border-box;
+      border-radius: 8px;
+
+      width: 480px;
+      position: absolute;
+      left: 8px;
+      top: 100px;
+      bottom: 8px;
+      overflow-y: auto;
+    }
+
+    .preregister-btn {
+      visibility: hidden;
+      /* Auto layout */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+
+      /*position: absolute;*/
+      width: 85px;
+      height: 52px;
+      /*right: 12px;*/
+      /*top: 25.42%;*/
+      /*bottom: 30.51%;*/
+
+      /* 14B */
+      font-style: normal;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 20px;
+      /* identical to box height, or 143% */
+      text-align: center;
+      /* White/100 */
+      background: #FFFFFF;
+      color: #055FAE;
+
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .preregister-btn:hover {
+      background: #45566A;
+      color: #FFFFFF;
+    }
+
+    .popup-dialog {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 16px;
+
+      box-shadow: 8px 24px 64px rgba(36, 71, 123, 0.15);
+      border-radius: 6px;
+      /*min-width: 307px;*/
+      /*min-height: 156px;*/
+    }
+    .popup-title {
+      font-style: normal;
+      font-weight: bold;
+      font-size: 20px;
+      line-height: 28px;
+      /* Coal/700 */
+      color: #29313A;
+      margin-bottom: 4px;
+    }
+    .popup-address {
+      /* 16R */
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 24px;
+      /* Coal/600 */
+      color: #4F5862;
+    }
+    .popup-preregister-btn {
+      margin-top: 12px;
+      /* Auto layout */
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      padding: 0 32px;
+
+
+      height: 32px;
+      box-sizing: border-box;
+      width: 100%;
+
+      /* Navi/500 */
+      background: #055FAE;
+      border-radius: 4px;
+      /* 14B */
+      font-style: normal;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 20px;
+      text-align: center;
+      color: #FFFFFF;
+      text-decoration: none;
+    }
+
+  </style>
+  <script>
+    'use strict';
+
+    /**
+     * Defines an instance of the Locator+ solution, to be instantiated
+     * when the Maps library is loaded.
+     */
+    function LocatorPlus(configuration) {
+      const locator = this;
+
+      locator.locations = configuration.locations || [];
+      locator.capabilities = configuration.capabilities || {};
+
+      const mapEl = document.getElementById('map');
+      const panelEl = document.getElementById('locations-panel');
+      locator.panelListEl = document.getElementById('locations-panel-list');
+      // const sectionNameEl =
+      //         document.getElementById('location-results-section-name');
+      const resultsContainerEl = document.getElementById('location-results-list');
+
+      const itemsTemplate = Handlebars.compile(
+              document.getElementById('locator-result-items-tmpl').innerHTML);
+
+      locator.searchLocation = null;
+      locator.searchLocationMarker = null;
+      locator.selectedLocationIdx = null;
+      locator.userCountry = null;
+
+
+      // Create a new StyledMapType object, passing it an array of styles,
+      // and the name to be displayed on the map type control.
+      const styledMapType = new google.maps.StyledMapType(
+              [
+                {
+                  "featureType": "water",
+                  "stylers": [
+                    {
+                      "visibility": "on"
+                    },
+                    {
+                      "color": "#b5cbe4"
+                    }
+                  ]
+                },
+                {
+                  "featureType": "landscape",
+                  "stylers": [
+                    {
+                      "color": "#efefef"
+                    }
+                  ]
+                },
+                {
+                  "featureType": "road.highway",
+                  "elementType": "geometry",
+                  "stylers": [
+                    {
+                      "color": "#83a5b0"
+                    }
+                  ]
+                },
+                {
+                  "featureType": "road.arterial",
+                  "elementType": "geometry",
+                  "stylers": [
+                    {
+                      "color": "#bdcdd3"
+                    }
+                  ]
+                },
+                {
+                  "featureType": "road.local",
+                  "elementType": "geometry",
+                  "stylers": [
+                    {
+                      "color": "#ffffff"
+                    }
+                  ]
+                },
+                {
+                  "featureType": "poi.park",
+                  "elementType": "geometry",
+                  "stylers": [
+                    {
+                      "color": "#e3eed3"
+                    }
+                  ]
+                },
+                {
+                  "featureType": "administrative",
+                  "stylers": [
+                    {
+                      "visibility": "on"
+                    },
+                    {
+                      "lightness": 33
+                    }
+                  ]
+                },
+                {
+                  "featureType": "road"
+                },
+                {
+                  "featureType": "poi.park",
+                  "elementType": "labels",
+                  "stylers": [
+                    {
+                      "visibility": "on"
+                    },
+                    {
+                      "lightness": 20
+                    }
+                  ]
+                },
+                {},
+                {
+                  "featureType": "road",
+                  "stylers": [
+                    {
+                      "lightness": 20
+                    }
+                  ]
+                }
+              ],
+              { name: "Styled Map" }
+      );
+      // Initialize the map -------------------------------------------------------
+      locator.map = new google.maps.Map(
+              mapEl,
+              {
+                ...configuration.mapOptions,
+                mapTypeControlOptions: {
+                  mapTypeIds: ["roadmap", "satellite", "hybrid", "terrain", "styled_map"],
+                },
+              }
+      );
+
+      //Associate the styled map with the MapTypeId and set it to display.
+      locator.map.mapTypes.set("styled_map", styledMapType);
+      locator.map.setMapTypeId("styled_map");
+
+      // Store selection.
+      const selectResultItem = function(locationIdx, panToMarker, scrollToResult) {
+        locator.selectedLocationIdx = locationIdx;
+        for (let locationElem of resultsContainerEl.children) {
+          locationElem.classList.remove('selected');
+          const preregisterBtn = locationElem.querySelector('.preregister-btn');
+          preregisterBtn.style.visibility = 'hidden';
+          if (getResultIndex(locationElem) === locator.selectedLocationIdx) {
+            locationElem.classList.add('selected');
+            preregisterBtn.style.visibility = 'visible';
+            if (scrollToResult) {
+              panelEl.scrollTop = locationElem.offsetTop;
+            }
+          }
+        }
+        if (panToMarker && (locationIdx != null)) {
+          locator.map.panTo(locator.locations[locationIdx].coords);
+        }
+      };
+
+      // Initialize marker icons
+      const baseIcon = {
+        url: `data:image/svg+xml;utf-8,
+          ${encodeURIComponent(
+            `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <mask id="path-1-outside-1_16347_5420" maskUnits="userSpaceOnUse" x="4" y="0" width="24" height="32" fill="black">
+                    <rect fill="white" x="4" width="24" height="32"/>
+                    <path d="M26 12C26 23 17 30 16 30C15 30 6 22 6 12C6 6.47715 10.4772 2 16 2C21.5228 2 26 6.47715 26 12Z"/>
+                </mask>
+                <path class="map-pick" d="M26 12C26 23 17 30 16 30C15 30 6 22 6 12C6 6.47715 10.4772 2 16 2C21.5228 2 26 6.47715 26 12Z" fill="#0C385F"/>
+                <path d="M24 12C24 16.94 21.9787 21.0253 19.7827 23.9148C18.6872 25.3563 17.5714 26.4682 16.6969 27.2039C16.2573 27.5737 15.9011 27.8295 15.6594 27.9801C15.601 28.0165 15.5539 28.0438 15.5182 28.0634C15.5005 28.073 15.4868 28.0802 15.4768 28.0852C15.4719 28.0876 15.4681 28.0895 15.4655 28.0907C15.4629 28.0919 15.4617 28.0925 15.4617 28.0924C15.4618 28.0924 15.4635 28.0917 15.4668 28.0903C15.47 28.089 15.4752 28.0869 15.4823 28.0842C15.4956 28.0791 15.5201 28.0703 15.5544 28.0602C15.6027 28.0461 15.767 28 16 28V32C16.5119 32 16.9345 31.8155 17.0925 31.745C17.3239 31.6416 17.5557 31.5114 17.7742 31.3754C18.2161 31.1001 18.7271 30.7232 19.2719 30.2648C20.3661 29.3443 21.6878 28.0187 22.9673 26.3352C25.5213 22.9747 28 18.06 28 12H24ZM16 28C16.2703 28 16.4608 28.0611 16.5154 28.0793C16.5548 28.0924 16.5831 28.104 16.5988 28.1107C16.6149 28.1176 16.6237 28.1221 16.6245 28.1225C16.6249 28.1227 16.6075 28.1138 16.5704 28.0909C16.5343 28.0687 16.4866 28.0376 16.427 27.9961C16.1799 27.8238 15.8176 27.5342 15.3702 27.1224C14.4808 26.3035 13.3494 25.0884 12.2398 23.57C9.99942 20.5042 8 16.4146 8 12H4C4 17.5854 6.50058 22.4958 9.01022 25.93C10.2756 27.6616 11.5817 29.0715 12.661 30.0651C13.198 30.5595 13.7029 30.9731 14.1394 31.2774C14.3547 31.4275 14.587 31.5746 14.8213 31.6929C14.9679 31.767 15.4284 32 16 32V28ZM8 12C8 7.58172 11.5817 4 16 4V0C9.37258 0 4 5.37258 4 12H8ZM16 4C20.4183 4 24 7.58172 24 12H28C28 5.37258 22.6274 0 16 0V4Z" fill="white" mask="url(#path-1-outside-1_16347_5420)"/>
+                <circle cx="16" cy="12" r="6" fill="white"/>
+            </svg>`
+          )}
+        `,
+      };
+      const activeIcon = {
+        url: `data:image/svg+xml;utf-8,
+          ${encodeURIComponent(
+                `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <mask id="path-1-outside-1_16347_5420" maskUnits="userSpaceOnUse" x="4" y="0" width="24" height="32" fill="black">
+                    <rect fill="white" x="4" width="24" height="32"/>
+                    <path d="M26 12C26 23 17 30 16 30C15 30 6 22 6 12C6 6.47715 10.4772 2 16 2C21.5228 2 26 6.47715 26 12Z"/>
+                </mask>
+                <path class="map-pick" d="M26 12C26 23 17 30 16 30C15 30 6 22 6 12C6 6.47715 10.4772 2 16 2C21.5228 2 26 6.47715 26 12Z" fill="#0088FF"/>
+                <path d="M24 12C24 16.94 21.9787 21.0253 19.7827 23.9148C18.6872 25.3563 17.5714 26.4682 16.6969 27.2039C16.2573 27.5737 15.9011 27.8295 15.6594 27.9801C15.601 28.0165 15.5539 28.0438 15.5182 28.0634C15.5005 28.073 15.4868 28.0802 15.4768 28.0852C15.4719 28.0876 15.4681 28.0895 15.4655 28.0907C15.4629 28.0919 15.4617 28.0925 15.4617 28.0924C15.4618 28.0924 15.4635 28.0917 15.4668 28.0903C15.47 28.089 15.4752 28.0869 15.4823 28.0842C15.4956 28.0791 15.5201 28.0703 15.5544 28.0602C15.6027 28.0461 15.767 28 16 28V32C16.5119 32 16.9345 31.8155 17.0925 31.745C17.3239 31.6416 17.5557 31.5114 17.7742 31.3754C18.2161 31.1001 18.7271 30.7232 19.2719 30.2648C20.3661 29.3443 21.6878 28.0187 22.9673 26.3352C25.5213 22.9747 28 18.06 28 12H24ZM16 28C16.2703 28 16.4608 28.0611 16.5154 28.0793C16.5548 28.0924 16.5831 28.104 16.5988 28.1107C16.6149 28.1176 16.6237 28.1221 16.6245 28.1225C16.6249 28.1227 16.6075 28.1138 16.5704 28.0909C16.5343 28.0687 16.4866 28.0376 16.427 27.9961C16.1799 27.8238 15.8176 27.5342 15.3702 27.1224C14.4808 26.3035 13.3494 25.0884 12.2398 23.57C9.99942 20.5042 8 16.4146 8 12H4C4 17.5854 6.50058 22.4958 9.01022 25.93C10.2756 27.6616 11.5817 29.0715 12.661 30.0651C13.198 30.5595 13.7029 30.9731 14.1394 31.2774C14.3547 31.4275 14.587 31.5746 14.8213 31.6929C14.9679 31.767 15.4284 32 16 32V28ZM8 12C8 7.58172 11.5817 4 16 4V0C9.37258 0 4 5.37258 4 12H8ZM16 4C20.4183 4 24 7.58172 24 12H28C28 5.37258 22.6274 0 16 0V4Z" fill="white" mask="url(#path-1-outside-1_16347_5420)"/>
+                <circle cx="16" cy="12" r="6" fill="white"/>
+            </svg>`
+        )}
+        `,
+      };
+
+      // Create a marker for each location.
+      const infowindow = new google.maps.InfoWindow();
+      google.maps.event.addListener(locator.map, "click", function(event) {
+        infowindow.close();
+      });
+      const markers = locator.locations.map(function(location, index) {
+        const marker = new google.maps.Marker({
+          position: location.coords,
+          map: locator.map,
+          icon: baseIcon,
+          title: location.title,
+          vaccination: location.vaccination,
+          schedule: location.schedule,
+        });
+        marker.addListener('mouseover', function () {
+          marker.setIcon(activeIcon);
+        });
+        marker.addListener('mouseout', function () {
+          marker.setIcon(baseIcon);
+        });
+        marker.addListener('click', function() {
+          selectResultItem(index, false, true);
+
+          infowindow.setContent(
+                  `<div class="popup-dialog">
+                      <div class="popup-title">${location.title}</div>
+                      <div class="popup-address">${location.address1}</div>
+                      <div class="popup-address">${location.address2}</div>
+                      <a class="popup-preregister-btn" href="/">Preregister</a>
+                    </div>`
+          );
+          infowindow.open({
+            anchor: marker,
+            map: locator.map,
+            shouldFocus: false,
+          });
+        });
+        return marker;
+      });
+
+      // Fit map to marker bounds.
+      locator.updateBounds = function() {
+        const bounds = new google.maps.LatLngBounds();
+        if (locator.searchLocationMarker) {
+          bounds.extend(locator.searchLocationMarker.getPosition());
+        }
+        for (let i = 0; i < markers.length; i++) {
+          bounds.extend(markers[i].getPosition());
+        }
+        locator.map.fitBounds(bounds);
+      };
+      if (locator.locations.length) {
+        locator.updateBounds();
+      }
+
+      // Get the distance of a store location to the user's location,
+      // used in sorting the list.
+      const getLocationDistance = function(location) {
+        if (!locator.searchLocation) return null;
+
+        // Use travel distance if available (from Distance Matrix).
+        if (location.travelDistanceValue != null) {
+          return location.travelDistanceValue;
+        }
+
+        // Fall back to straight-line distance.
+        return google.maps.geometry.spherical.computeDistanceBetween(
+                new google.maps.LatLng(location.coords),
+                locator.searchLocation.location);
+      };
+
+      // Render the results list --------------------------------------------------
+      const getResultIndex = function(elem) {
+        return parseInt(elem.getAttribute('data-location-index'));
+      };
+
+      locator.renderResultsList = function() {
+        let locations = locator.locations.slice();
+        for (let i = 0; i < locations.length; i++) {
+          locations[i].index = i;
+        }
+
+        console.log(locator.searchLocation)
+        if (locator.searchLocation) {
+          sectionNameEl.textContent =
+                  'Nearest locations (' + locations.length + ')';
+          locations.sort(function(a, b) {
+            return getLocationDistance(a) - getLocationDistance(b);
+          });
+        } else {
+          // sectionNameEl.textContent = `All locations (${locations.length})`;
+        }
+
+        const resultItemContext = { locations: locations };
+        resultsContainerEl.innerHTML = itemsTemplate(resultItemContext);
+        for (let item of resultsContainerEl.children) {
+          const resultIndex = getResultIndex(item);
+          if (resultIndex === locator.selectedLocationIdx) {
+            item.classList.add('selected');
+          }
+
+          const resultSelectionHandler = function() {
+            selectResultItem(resultIndex, true, false);
+          };
+
+          // Clicking anywhere on the item selects this location.
+          // Additionally, create a button element to make this behavior
+          // accessible under tab navigation.
+          item.addEventListener('mouseenter', resultSelectionHandler);
+          item.querySelector('.select-location')
+                  .addEventListener('click', function(e) {
+                    resultSelectionHandler();
+                    e.stopPropagation();
+                  });
+        }
+      };
+
+      // Optional capability initialization --------------------------------------
+      initializeSearchInput(locator);
+      initializeDistanceMatrix(locator);
+
+      // Initial render of results -----------------------------------------------
+      locator.renderResultsList();
+    }
+
+    /** When the search input capability is enabled, initialize it. */
+    function initializeSearchInput(locator) {
+      const geocodeCache = new Map();
+      const geocoder = new google.maps.Geocoder();
+
+      const searchInputEl = document.getElementById('location-search-input');
+      const searchButtonEl = document.getElementById('location-search-button');
+
+      const updateSearchLocation = function(address, location) {
+        if (locator.searchLocationMarker) {
+          locator.searchLocationMarker.setMap(null);
+        }
+        if (!location) {
+          locator.searchLocation = null;
+          return;
+        }
+        locator.searchLocation = {'address': address, 'location': location};
+        locator.searchLocationMarker = new google.maps.Marker({
+          position: location,
+          map: locator.map,
+          title: 'My location',
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 12,
+            fillColor: '#3367D6',
+            fillOpacity: 0.5,
+            strokeOpacity: 0,
+          }
+        });
+
+        // Update the locator's idea of the user's country, used for units. Use
+        // `formatted_address` instead of the more structured `address_components`
+        // to avoid an additional billed call.
+        const addressParts = address.split(' ');
+        locator.userCountry = addressParts[addressParts.length - 1];
+
+        // Update map bounds to include the new location marker.
+        locator.updateBounds();
+
+        // Update the result list so we can sort it by proximity.
+        locator.renderResultsList();
+
+        locator.updateTravelTimes();
+      };
+
+      const geocodeSearch = function(query) {
+        if (!query) {
+          return;
+        }
+
+        const handleResult = function(geocodeResult) {
+          searchInputEl.value = geocodeResult.formatted_address;
+          updateSearchLocation(
+                  geocodeResult.formatted_address, geocodeResult.geometry.location);
+        };
+
+        if (geocodeCache.has(query)) {
+          handleResult(geocodeCache.get(query));
+          return;
+        }
+        const request = {address: query, bounds: locator.map.getBounds()};
+        geocoder.geocode(request, function(results, status) {
+          if (status === 'OK') {
+            if (results.length > 0) {
+              const result = results[0];
+              geocodeCache.set(query, result);
+              handleResult(result);
+            }
+          }
+        });
+      };
+
+      // Set up geocoding on the search input.
+      searchButtonEl.addEventListener('click', function() {
+        geocodeSearch(searchInputEl.value.trim());
+      });
+
+      // Initialize Autocomplete.
+      initializeSearchInputAutocomplete(
+              locator, searchInputEl, geocodeSearch, updateSearchLocation);
+    }
+
+    /** Add Autocomplete to the search input. */
+    function initializeSearchInputAutocomplete(
+            locator, searchInputEl, fallbackSearch, searchLocationUpdater) {
+      // Set up Autocomplete on the search input. Bias results to map viewport.
+      const autocomplete = new google.maps.places.Autocomplete(searchInputEl, {
+        types: ['geocode'],
+        fields: ['place_id', 'formatted_address', 'geometry.location']
+      });
+      autocomplete.bindTo('bounds', locator.map);
+      autocomplete.addListener('place_changed', function() {
+        const placeResult = autocomplete.getPlace();
+        if (!placeResult.geometry) {
+          // Hitting 'Enter' without selecting a suggestion will result in a
+          // placeResult with only the text input value as the 'name' field.
+          fallbackSearch(placeResult.name);
+          return;
+        }
+        searchLocationUpdater(
+                placeResult.formatted_address, placeResult.geometry.location);
+      });
+    }
+
+    /** Initialize Distance Matrix for the locator. */
+    function initializeDistanceMatrix(locator) {
+      const distanceMatrixService = new google.maps.DistanceMatrixService();
+
+      // Annotate travel times to the selected location using Distance Matrix.
+      locator.updateTravelTimes = function() {
+        if (!locator.searchLocation) return;
+
+        const units = (locator.userCountry === 'USA') ?
+                google.maps.UnitSystem.IMPERIAL :
+                google.maps.UnitSystem.METRIC;
+        const request = {
+          origins: [locator.searchLocation.location],
+          destinations: locator.locations.map(function(x) {
+            return x.coords;
+          }),
+          travelMode: google.maps.TravelMode.DRIVING,
+          unitSystem: units,
+        };
+        const callback = function(response, status) {
+          if (status === 'OK') {
+            const distances = response.rows[0].elements;
+            for (let i = 0; i < distances.length; i++) {
+              const distResult = distances[i];
+              let travelDistanceText, travelDistanceValue;
+              if (distResult.status === 'OK') {
+                travelDistanceText = distResult.distance.text;
+                travelDistanceValue = distResult.distance.value;
+              }
+              const location = locator.locations[i];
+              location.travelDistanceText = travelDistanceText;
+              location.travelDistanceValue = travelDistanceValue;
+            }
+
+            // Re-render the results list, in case the ordering has changed.
+            locator.renderResultsList();
+          }
+        };
+        distanceMatrixService.getDistanceMatrix(request, callback);
+      };
+    }
+  </script>
+  <script>
+    const CONFIGURATION = {
+      "locations": [
+        {
+          "title":"CORE - Echo Park",
+          "address1":"2044 Reservoir St",
+          "address2":"Los Angeles, CA 90026, USA",
+          "vaccination": true,
+          "schedule": {
+            days: 'Mon - Sat',
+            hours: '8am-4pm'
+          },
+          "coords":{
+            "lat":34.07874527342286,
+            "lng":-118.2621040932541
+          },
+          "placeId":"ChIJa7z1hxnHwoARwSTReKDCppw"
+        },
+        {
+          "title":"CORE - First United Methodist Church",
+          "address1":"1025 S Long Beach Blvd",
+          "address2":"Compton, CA 90221, USA",
+          "mobile": true,
+          "schedule": {
+            days: 'Tue - Sat',
+            hours: '10am-6pm'
+          },
+          "coords":{
+            "lat":33.88710179655561,
+            "lng":-118.20684176441803
+          },
+          "placeId":"ChIJ8Zl0sVjLwoARqjizxSEkpqQ"
+        },
+        {
+          "title":"CORE - LA Apparel Warehouse",
+          "address1":"1020 E 59th St",
+          "address2":"Los Angeles, CA 90001, USA",
+          "coords":{
+            "lat":33.986893553859176,
+            "lng":-118.25757990674592},
+          "placeId":"ChIJyVXxEVTIwoAR4Qxiq9xg1ew"
+        },
+        {
+          "title":"FH - Jefferson",
+          "address1":"2920 W Jefferson Blvd",
+          "address2":"Los Angeles, CA 90018, USA",
+          "coords":{
+            "lat":34.02550554014371,
+            "lng":-118.32790803558197
+          },
+          "placeId":"ChIJ3-ABRj-4woAR0Sz3BSwI57I"
+        }
+      ],
+      "mapOptions": {
+        "center":{
+          "lat":38.0,
+          "lng":-100.0
+        },
+        "fullscreenControl":true,
+        "mapTypeControl":false,
+        "streetViewControl":false,
+        "zoom":4,
+        "zoomControl":true,
+        "maxZoom":17
+      },
+      "mapsApiKey": "AIzaSyChLRDowBBnYvY16Zl2hLsWatW6mcpsuuo"
+
+    };
+
+    function initMap() {
+      new LocatorPlus(CONFIGURATION);
+    }
+  </script>
+  <script id="locator-result-items-tmpl" type="text/x-handlebars-template">
+    {{#each locations}}
+      <li class="location-result" data-location-index="{{index}}">
+        <div>
+          <button class="select-location">
+            <div class="name">{{title}}</div>
+<!--          <p>Closed Now</p>-->
+          </button>
+          <div class="address">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3.25C8.27277 3.25 5.25 6.30149 5.25 10.0433C5.25 12.7826 6.82404 15.4408 8.32049 17.344C9.08066 18.3108 9.84813 19.1171 10.4442 19.6845C10.7419 19.968 11.0016 20.1963 11.2008 20.3579C11.2991 20.4376 11.3909 20.5079 11.47 20.5619C11.5081 20.5879 11.5559 20.6189 11.6074 20.6465C11.6327 20.6601 11.6717 20.6798 11.7193 20.6978C11.7518 20.7101 11.8589 20.75 12 20.75C12.1411 20.75 12.2482 20.7101 12.2807 20.6978C12.3283 20.6798 12.3673 20.6601 12.3926 20.6465C12.4441 20.6189 12.4919 20.5879 12.53 20.5619C12.6091 20.5079 12.7009 20.4376 12.7992 20.3579C12.9984 20.1963 13.2581 19.968 13.5558 19.6845C14.1519 19.1171 14.9193 18.3108 15.6795 17.344C17.176 15.4408 18.75 12.7826 18.75 10.0433C18.75 6.30149 15.7272 3.25 12 3.25ZM12 12.5833C10.5762 12.5833 9.41667 11.4238 9.41667 10C9.41667 8.57621 10.5762 7.41667 12 7.41667C13.4238 7.41667 14.5833 8.57621 14.5833 10C14.5833 11.4238 13.4238 12.5833 12 12.5833Z" stroke="#788697" stroke-width="1.5"/>
+            </svg>
+            <div>
+              {{address1}}, {{address2}}
+            </div>
+          </div>
+          <div class="location-labels">
+            {{#if vaccination}}
+              <div class="blue-text">Vaccination</div>
+            {{/if}}
+            {{#if mobile}}
+              <div class="blue-text blue-background">Mobile</div>
+            {{/if}}
+          {{#if schedule}}
+            <div>{{schedule.days}} {{schedule.hours}}</div>
+          {{/if}}
+          </div>
+        </div>
+        <a class="preregister-btn" href="/">
+          Preregister
+        </a>
+      </li>
+    {{/each}}
+  </script>
+<!--        {{#if travelDistanceText}}-->
+<!--          <div class="distance">{{travelDistanceText}}</div>-->
+<!--        {{/if}}-->
+</head>
+<body>
+<div id="map-container">
+  <div id="locations-panel">
+    <div id="locations-panel-list">
+      <header>
+<!--        <h1 class="search-title">-->
+<!--          <img src="https://fonts.gstatic.com/s/i/googlematerialicons/place/v15/24px.svg"/>-->
+<!--          Find a location near you-->
+<!--        </h1>-->
+        <div class="search-input">
+          <input id="location-search-input" placeholder="Enter your address or zip code">
+          <div id="search-overlay-search" class="search-input-overlay search">
+            <button id="location-search-button">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.5 17C14.0899 17 17 14.0899 17 10.5C17 6.91015 14.0899 4 10.5 4C6.91015 4 4 6.91015 4 10.5C4 14.0899 6.91015 17 10.5 17Z" stroke="#4F5862" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M20 21L15 16" stroke="#4F5862" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <!--              <img class="icon" src="https://fonts.gstatic.com/s/i/googlematerialicons/search/v11/24px.svg" alt="Search"/>-->
+            </button>
+          </div>
+        </div>
+      </header>
+<!--      <div class="section-name" id="location-results-section-name">-->
+<!--        All locations-->
+<!--      </div>-->
+      <div class="results">
+        <ul id="location-results-list"></ul>
+      </div>
+    </div>
+  </div>
+  <div id="map"></div>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyChLRDowBBnYvY16Zl2hLsWatW6mcpsuuo&callback=initMap&libraries=places,geometry&solution_channel=GMP_QB_locatorplus_v4_cABD" async defer></script>
+</body>
+</html>
