@@ -44,9 +44,13 @@
     #map-container {
       width: 100%;
       height: 100%;
-      position: relative;
-      font-family: "Gilroy", sans-serif;
+      /*position: relative;*/
+      display: flex;
+      justify-content: center;
+      font-family: Gilroy, sans-serif;
       box-sizing: border-box;
+
+      padding: 20px 80px;
     }
 
     #map-container button {
@@ -60,42 +64,109 @@
     }
 
     #map {
-      position: absolute;
+      /*position: absolute;*/
       /*MAKE IT RESPONSIVE*/
-      left: 500px;
-      top: 20px;
-      right: 8px;
-      bottom: 8px;
+      /*width: 1420px;*/
+      /*left: 500px;*/
+      /*top: 20px;*/
+      /*right: 8px;*/
+      /*bottom: 8px;*/
       border-radius: 8px;
+      margin-left: 12px;
     }
 
     #locations-panel {
-      position: absolute;
+      /*position: absolute;*/
       left: 0;
       /*MAKE IT RESPONSIVE*/
       width: 480px;
       /*width: 22em;*/
-      top: 0;
+      /*top: 0;*/
       bottom: 0;
       /*overflow-y: auto;*/
       background: white;
-      padding: 0.5em;
+      /*padding: 0.5em;*/
       /*box-sizing: border-box;*/
     }
 
-
-    @media only screen and (max-width: 876px) {
-      #map {
-        left: 0;
-        bottom: 50%;
+    @media only screen and (max-width: 1760px) {
+      #map-container {
+        padding-left: 80px;
+        padding-right: 80px;
       }
-
-      #locations-panel {
-        top: 50%;
-        right: 0;
-        width: unset;
+      #map {
+        width: inherit;
       }
     }
+
+    @media only screen and (max-width: 1366px) {
+      #map-container {
+        padding-left: 40px;
+        padding-right: 40px;
+      }
+      #map {
+        width: inherit;
+      }
+    }
+
+    @media only screen and (max-width: 800px) {
+      #map-container {
+        flex-direction: column-reverse;
+        justify-content: flex-end;
+        align-items: center;
+        align-content: center;
+        /*padding-left: 40px;*/
+        /*padding-right: 40px;*/
+      }
+
+      #map {
+        /*width: 100%!important;*/
+        /*margin-right: 40px;*/
+        height: 520px;
+        margin-left: 0;
+        margin-bottom: 12px;
+        /*left: 0;*/
+        /*bottom: 50%;*/
+      }
+      /*#map div {*/
+      /*  height: 520px;*/
+      /*}*/
+
+      #locations-panel {
+        height: 520px;
+        width: 100%!important;
+        /*top: 50%;*/
+        /*right: 0;*/
+        /*width: unset;*/
+      }
+      #location-results-list {
+        width: 100%!important;
+      }
+    }
+
+
+    @media only screen and (min-width: 1760px) {
+      #map {
+        width: 1100px;
+      }
+    }
+
+    @media only screen and (min-width: 2096px) {
+      #map {
+        width: 1420px;
+      }
+    }
+
+
+    /*@media only screen and (max-width: 1760px) {*/
+
+    /*}*/
+
+    /*@media only screen and (max-width: 1366px) {*/
+
+    /*}*/
+
+
 
     #locations-panel-list > header {
       /*padding: 1.4em 1.4em 0 1.4em;*/
@@ -114,7 +185,7 @@
 
     #locations-panel-list .search-input {
       width: 100%;
-      margin-top: 0.8em;
+      /*margin-top: 0.8em;*/
       margin-bottom: 12px;
       position: relative;
       /*height: 56px;*/
@@ -299,13 +370,13 @@
     #location-results-list {
       list-style-type: none;
       margin: 0;
-      padding: 12px 22px 12px 10px;
+      padding: 12px 12px 12px 10px;
       border: 1px solid #CDD6E1;
       box-sizing: border-box;
       border-radius: 8px;
 
       width: 480px;
-      position: absolute;
+      /*position: absolute;*/
       left: 8px;
       top: 100px;
       bottom: 8px;
@@ -345,6 +416,14 @@
     .preregister-btn:hover {
       background: #45566A;
       color: #FFFFFF;
+    }
+
+    @media only screen and (max-width: 800px) {
+      .preregister-btn {
+        width: 48px;
+        height: 48px;
+        padding: 0;
+      }
     }
 
     .popup-dialog {
@@ -970,7 +1049,8 @@
           </div>
         </div>
         <a class="preregister-btn" href="/">
-          Preregister
+          +
+<!--          Preregister-->
         </a>
       </li>
     {{/each}}
