@@ -1,18 +1,3 @@
-<!--
-  Copyright 2021 Google LLC
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
 <!DOCTYPE html>
 <html>
 <head>
@@ -44,55 +29,65 @@
     #map-container {
       width: 100%;
       height: 100%;
-      /*position: relative;*/
       display: flex;
       justify-content: center;
       font-family: Gilroy, sans-serif;
       box-sizing: border-box;
-
       padding: 20px 80px;
     }
 
     #map-container button {
-      /*background: none;*/
-      /*color: inherit;*/
       border: none;
       padding: 0;
-      /*font: inherit;*/
-      /*font-size: inherit;*/
-      /*cursor: pointer;*/
     }
 
     #map {
-      /*position: absolute;*/
-      /*MAKE IT RESPONSIVE*/
-      /*width: 1420px;*/
-      /*left: 500px;*/
-      /*top: 20px;*/
-      /*right: 8px;*/
-      /*bottom: 8px;*/
       border-radius: 8px;
       margin-left: 12px;
+      height: inherit;
     }
 
     #locations-panel {
-      /*position: absolute;*/
-      left: 0;
-      /*MAKE IT RESPONSIVE*/
       width: 480px;
-      /*width: 22em;*/
-      /*top: 0;*/
-      bottom: 0;
-      /*overflow-y: auto;*/
       background: white;
-      /*padding: 0.5em;*/
-      /*box-sizing: border-box;*/
+      height: inherit;
+    }
+
+    /* Adjust left list height to the map height */
+    #locations-panel-list {
+      height: calc(100% - 22px);
+    }
+    .results {
+      height: calc(100% - 22px);
+    }
+    #location-results-list {
+      height: calc(100% - 22px);
+    }
+
+    /* Responsive */
+    @media only screen and (min-width: 2096px) {
+      #map-container {
+        height: 1000px;
+      }
+      #map {
+        width: 1420px;
+      }
+    }
+
+    @media only screen and (max-width: 2096px) {
+      #map-container {
+        height: 840px;
+      }
+      #map {
+        width: 1100px;
+      }
     }
 
     @media only screen and (max-width: 1760px) {
       #map-container {
         padding-left: 80px;
         padding-right: 80px;
+        height: 640px;
       }
       #map {
         width: inherit;
@@ -103,9 +98,13 @@
       #map-container {
         padding-left: 40px;
         padding-right: 40px;
+        height: 520px;
       }
       #map {
         width: inherit;
+      }
+      #location-results-list {
+        width: 360px!important;
       }
     }
 
@@ -115,61 +114,22 @@
         justify-content: flex-end;
         align-items: center;
         align-content: center;
-        /*padding-left: 40px;*/
-        /*padding-right: 40px;*/
+        height: 1040px;
       }
 
       #map {
-        /*width: 100%!important;*/
-        /*margin-right: 40px;*/
         height: 520px;
         margin-left: 0;
         margin-bottom: 12px;
-        /*left: 0;*/
-        /*bottom: 50%;*/
       }
-      /*#map div {*/
-      /*  height: 520px;*/
-      /*}*/
 
       #locations-panel {
         height: 520px;
         width: 100%!important;
-        /*top: 50%;*/
-        /*right: 0;*/
-        /*width: unset;*/
       }
       #location-results-list {
         width: 100%!important;
       }
-    }
-
-
-    @media only screen and (min-width: 1760px) {
-      #map {
-        width: 1100px;
-      }
-    }
-
-    @media only screen and (min-width: 2096px) {
-      #map {
-        width: 1420px;
-      }
-    }
-
-
-    /*@media only screen and (max-width: 1760px) {*/
-
-    /*}*/
-
-    /*@media only screen and (max-width: 1366px) {*/
-
-    /*}*/
-
-
-
-    #locations-panel-list > header {
-      /*padding: 1.4em 1.4em 0 1.4em;*/
     }
 
     #locations-panel-list h1.search-title {
@@ -178,50 +138,26 @@
       margin: 0;
     }
 
-    /*#locations-panel-list h1.search-title > img {*/
-    /*  vertical-align: bottom;*/
-    /*  margin-top: -1em;*/
-    /*}*/
-
     #locations-panel-list .search-input {
       width: 100%;
-      /*margin-top: 0.8em;*/
       margin-bottom: 12px;
       position: relative;
-      /*height: 56px;*/
-      /*!* Ash/200 *!*/
-
-      /*background: #F9FAFB;*/
-      /*!* Ash/400 *!*/
-
-      /*border: 1px solid #E2E7EE;*/
-      /*box-sizing: border-box;*/
-      /*border-radius: 4px;*/
     }
 
     #locations-panel-list .search-input input {
       width: 100%;
-      /*height: 2.2em;*/
-      /*padding: 0 2.5em 0 1em;*/
       padding: 0 1em 0 44px;
-      /*font-size: 1em;*/
       height: 56px;
-
       /* Ash/200 */
       background: #F9FAFB;
       /* Ash/400 */
       border: 1px solid #E2E7EE;
       box-sizing: border-box;
       border-radius: 4px;
-
-
       /* 16R */
       font-style: normal;
       font-weight: normal;
       font-size: 16px;
-      /*line-height: 24px;*/
-      /* identical to box height, or 150% */
-
       /* Coal/500 */
       color: #788697;
     }
@@ -237,8 +173,6 @@
     }
 
     #locations-panel-list .search-input-overlay.search {
-      /*right: 2px;*/
-      /*left: 0px;*/
       top: 2px;
       bottom: 2px;
       width: 44px;
@@ -274,16 +208,11 @@
       align-items: center;
     }
 
-    /*#locations-panel-list .location-result:first-of-type {*/
-    /*  border-top: 1px solid rgba(0, 0, 0, 0.12);*/
-    /*}*/
-
     #locations-panel-list .location-result:last-of-type {
       border-bottom: none;
     }
 
     #locations-panel-list .location-result.selected {
-      /*outline: 2px solid #4285f4;*/
       background: #F7FAFF;
     }
 
@@ -294,9 +223,6 @@
     }
 
     #locations-panel-list .location-result div.name {
-      /*font-size: 1em;*/
-      /*font-weight: 500;*/
-      /*margin: 0;*/
       /* 20B */
       font-family: Gilroy, sans-serif;
       font-style: normal;
@@ -304,12 +230,8 @@
       font-size: 20px;
       line-height: 28px;
       /* identical to box height, or 140% */
-
-
       /* Coal/700 */
-
       color: #29313A;
-
     }
 
     #locations-panel-list .location-result .address {
@@ -318,8 +240,6 @@
       align-items: center;
       position: relative;
       left: -4px;
-      /*font-size: 0.9em;*/
-      /*margin-bottom: 0.5em;*/
       /* 16R */
       font-family: Gilroy, sans-serif;
       font-style: normal;
@@ -359,12 +279,12 @@
     }
 
     #locations-panel-list .location-result .distance {
-      position: absolute;
-      top: 0.9em;
-      right: 0;
-      text-align: center;
-      font-size: 0.9em;
-      width: 5em;
+      /*position: absolute;*/
+      /*top: 0.9em;*/
+      /*right: 30%;*/
+      /*font-size: 0.9em;*/
+      /*text-align: center;*/
+      /*width: 5em;*/
     }
 
     #location-results-list {
@@ -376,10 +296,6 @@
       border-radius: 8px;
 
       width: 480px;
-      /*position: absolute;*/
-      left: 8px;
-      top: 100px;
-      bottom: 8px;
       overflow-y: auto;
     }
 
@@ -390,14 +306,8 @@
       justify-content: center;
       align-items: center;
       padding: 16px;
-
-      /*position: absolute;*/
       width: 85px;
       height: 52px;
-      /*right: 12px;*/
-      /*top: 25.42%;*/
-      /*bottom: 30.51%;*/
-
       /* 14B */
       font-style: normal;
       font-weight: bold;
@@ -418,11 +328,24 @@
       color: #FFFFFF;
     }
 
-    @media only screen and (max-width: 800px) {
+    .preregister-long {
+      display: inline-block;
+    }
+    .preregister-short {
+      display: none;
+    }
+
+    @media only screen and (max-width: 1366px) {
       .preregister-btn {
         width: 48px;
         height: 48px;
         padding: 0;
+      }
+      .preregister-long {
+        display: none;
+      }
+      .preregister-short {
+        display: inline-block;
       }
     }
 
@@ -434,8 +357,6 @@
 
       box-shadow: 8px 24px 64px rgba(36, 71, 123, 0.15);
       border-radius: 6px;
-      /*min-width: 307px;*/
-      /*min-height: 156px;*/
     }
     .popup-title {
       font-style: normal;
@@ -499,8 +420,8 @@
       const mapEl = document.getElementById('map');
       const panelEl = document.getElementById('locations-panel');
       locator.panelListEl = document.getElementById('locations-panel-list');
-      // const sectionNameEl =
-      //         document.getElementById('location-results-section-name');
+      const sectionNameEl =
+              document.getElementById('location-results-section-name');
       const resultsContainerEl = document.getElementById('location-results-list');
 
       const itemsTemplate = Handlebars.compile(
@@ -758,16 +679,15 @@
           locations[i].index = i;
         }
 
-        console.log(locator.searchLocation)
-        if (locator.searchLocation) {
-          sectionNameEl.textContent =
-                  'Nearest locations (' + locations.length + ')';
-          locations.sort(function(a, b) {
-            return getLocationDistance(a) - getLocationDistance(b);
-          });
-        } else {
-          // sectionNameEl.textContent = `All locations (${locations.length})`;
-        }
+        // if (locator.searchLocation) {
+        //   sectionNameEl.textContent =
+        //           'Nearest locations (' + locations.length + ')';
+        //   locations.sort(function(a, b) {
+        //     return getLocationDistance(a) - getLocationDistance(b);
+        //   });
+        // } else {
+        //   sectionNameEl.textContent = `All locations (${locations.length})`;
+        // }
 
         const resultItemContext = { locations: locations };
         resultsContainerEl.innerHTML = itemsTemplate(resultItemContext);
@@ -930,6 +850,7 @@
             for (let i = 0; i < distances.length; i++) {
               const distResult = distances[i];
               let travelDistanceText, travelDistanceValue;
+              console.log(distResult);
               if (distResult.status === 'OK') {
                 travelDistanceText = distResult.distance.text;
                 travelDistanceValue = distResult.distance.value;
@@ -998,7 +919,19 @@
             "lng":-118.32790803558197
           },
           "placeId":"ChIJ3-ABRj-4woAR0Sz3BSwI57I"
-        }
+        },
+        {"title":"CORE - Echo Park","address1":"2044 Reservoir St","address2":"Los Angeles, CA 90026, USA","coords":{"lat":34.07874527342286,"lng":-118.2621040932541},"placeId":"ChIJa7z1hxnHwoARwSTReKDCppw"},
+        {"title":"CORE - First United Methodist Church","address1":"1025 S Long Beach Blvd","address2":"Compton, CA 90221, USA","coords":{"lat":33.88710179655561,"lng":-118.20684176441803},"placeId":"ChIJ8Zl0sVjLwoARqjizxSEkpqQ"},
+        {"title":"CORE - LA Apparel Warehouse","address1":"1020 E 59th St","address2":"Los Angeles, CA 90001, USA","coords":{"lat":33.986893553859176,"lng":-118.25757990674592},"placeId":"ChIJyVXxEVTIwoAR4Qxiq9xg1ew"},
+        {"title":"FH - Jefferson","address1":"2920 W Jefferson Blvd","address2":"Los Angeles, CA 90018, USA","coords":{"lat":34.02550554014371,"lng":-118.32790803558197},"placeId":"ChIJ3-ABRj-4woAR0Sz3BSwI57I"},
+        {"title":"CORE - Echo Park","address1":"2044 Reservoir St","address2":"Los Angeles, CA 90026, USA","coords":{"lat":34.07874527342286,"lng":-118.2621040932541},"placeId":"ChIJa7z1hxnHwoARwSTReKDCppw"},
+        {"title":"CORE - First United Methodist Church","address1":"1025 S Long Beach Blvd","address2":"Compton, CA 90221, USA","coords":{"lat":33.88710179655561,"lng":-118.20684176441803},"placeId":"ChIJ8Zl0sVjLwoARqjizxSEkpqQ"},
+        {"title":"CORE - LA Apparel Warehouse","address1":"1020 E 59th St","address2":"Los Angeles, CA 90001, USA","coords":{"lat":33.986893553859176,"lng":-118.25757990674592},"placeId":"ChIJyVXxEVTIwoAR4Qxiq9xg1ew"},
+        {"title":"FH - Jefferson","address1":"2920 W Jefferson Blvd","address2":"Los Angeles, CA 90018, USA","coords":{"lat":34.02550554014371,"lng":-118.32790803558197},"placeId":"ChIJ3-ABRj-4woAR0Sz3BSwI57I"},
+        {"title":"CORE - Echo Park","address1":"2044 Reservoir St","address2":"Los Angeles, CA 90026, USA","coords":{"lat":34.07874527342286,"lng":-118.2621040932541},"placeId":"ChIJa7z1hxnHwoARwSTReKDCppw"},
+        {"title":"CORE - First United Methodist Church","address1":"1025 S Long Beach Blvd","address2":"Compton, CA 90221, USA","coords":{"lat":33.88710179655561,"lng":-118.20684176441803},"placeId":"ChIJ8Zl0sVjLwoARqjizxSEkpqQ"},
+        {"title":"CORE - LA Apparel Warehouse","address1":"1020 E 59th St","address2":"Los Angeles, CA 90001, USA","coords":{"lat":33.986893553859176,"lng":-118.25757990674592},"placeId":"ChIJyVXxEVTIwoAR4Qxiq9xg1ew"},
+        {"title":"FH - Jefferson","address1":"2920 W Jefferson Blvd","address2":"Los Angeles, CA 90018, USA","coords":{"lat":34.02550554014371,"lng":-118.32790803558197},"placeId":"ChIJ3-ABRj-4woAR0Sz3BSwI57I"},
       ],
       "mapOptions": {
         "center":{
@@ -1028,6 +961,9 @@
             <div class="name">{{title}}</div>
 <!--          <p>Closed Now</p>-->
           </button>
+            {{#if travelDistanceText}}
+              <div class="distance">{{travelDistanceText}}</div>
+            {{/if}}
           <div class="address">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 3.25C8.27277 3.25 5.25 6.30149 5.25 10.0433C5.25 12.7826 6.82404 15.4408 8.32049 17.344C9.08066 18.3108 9.84813 19.1171 10.4442 19.6845C10.7419 19.968 11.0016 20.1963 11.2008 20.3579C11.2991 20.4376 11.3909 20.5079 11.47 20.5619C11.5081 20.5879 11.5559 20.6189 11.6074 20.6465C11.6327 20.6601 11.6717 20.6798 11.7193 20.6978C11.7518 20.7101 11.8589 20.75 12 20.75C12.1411 20.75 12.2482 20.7101 12.2807 20.6978C12.3283 20.6798 12.3673 20.6601 12.3926 20.6465C12.4441 20.6189 12.4919 20.5879 12.53 20.5619C12.6091 20.5079 12.7009 20.4376 12.7992 20.3579C12.9984 20.1963 13.2581 19.968 13.5558 19.6845C14.1519 19.1171 14.9193 18.3108 15.6795 17.344C17.176 15.4408 18.75 12.7826 18.75 10.0433C18.75 6.30149 15.7272 3.25 12 3.25ZM12 12.5833C10.5762 12.5833 9.41667 11.4238 9.41667 10C9.41667 8.57621 10.5762 7.41667 12 7.41667C13.4238 7.41667 14.5833 8.57621 14.5833 10C14.5833 11.4238 13.4238 12.5833 12 12.5833Z" stroke="#788697" stroke-width="1.5"/>
@@ -1049,15 +985,12 @@
           </div>
         </div>
         <a class="preregister-btn" href="/">
-          +
-<!--          Preregister-->
+          <span class="preregister-long">Preregister</span>
+          <span class="preregister-short">+</span>
         </a>
       </li>
     {{/each}}
   </script>
-<!--        {{#if travelDistanceText}}-->
-<!--          <div class="distance">{{travelDistanceText}}</div>-->
-<!--        {{/if}}-->
 </head>
 <body>
 <div id="map-container">
