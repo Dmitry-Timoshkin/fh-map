@@ -216,13 +216,15 @@
       background: #F7FAFF;
     }
 
-    #locations-panel-list button.select-location {
+    #locations-panel-list div.select-location {
       background: none;
       margin-bottom: 4px;
       text-align: left;
+      /*display: flex;*/
+      /*align-items: flex-start;*/
     }
 
-    #locations-panel-list .location-result div.name {
+    #locations-panel-list .location-result span.name {
       /* 20B */
       font-family: Gilroy, sans-serif;
       font-style: normal;
@@ -232,6 +234,20 @@
       /* identical to box height, or 140% */
       /* Coal/700 */
       color: #29313A;
+
+      margin-right: 16px;
+    }
+
+    #locations-panel-list div.select-location > span.distance {
+      display: inline-block;
+      width: max-content;
+      white-space: nowrap;
+      color: #F67760;
+      /* 14M */
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 20px;
     }
 
     #locations-panel-list .location-result .address {
@@ -546,7 +562,7 @@
       locator.map.setMapTypeId("styled_map");
 
       // Store selection.
-      const selectResultItem = function(locationIdx, panToMarker, scrollToResult) {
+      const selectResultItem = function(locationIdx, panToMarker, scrollToResult, markers = null) {
         locator.selectedLocationIdx = locationIdx;
         for (let locationElem of resultsContainerEl.children) {
           locationElem.classList.remove('selected');
@@ -560,10 +576,35 @@
             }
           }
         }
-        if (panToMarker && (locationIdx != null)) {
-          locator.map.panTo(locator.locations[locationIdx].coords);
+        if (markers && (locationIdx != null)) {
+          markers.forEach(
+                  (marker, markerIdx) => locationIdx === markerIdx
+                          ? marker.setIcon(activeIcon)
+                          : marker.setIcon(baseIcon)
+          )
+          // marker.setIcon(activeIcon);
+          // console.log(markers);
+          // console.log(locator);
+          // console.log(locationIdx);
+          // locator.map.panTo(locator.locations[locationIdx].coords);
         }
       };
+
+      const leaveResultItem = function (locationIdx, panToMarker, scrollToResult, markers = null) {
+        console.log(locationIdx);
+        if (markers && (locationIdx != null)) {
+          // Remove element selection
+          const locationElem = Array.from(resultsContainerEl.children)
+                  .find((_, idx) => locationIdx === idx)
+          locationElem.classList.remove('selected');
+          const preregisterBtn = locationElem.querySelector('.preregister-btn');
+          preregisterBtn.style.visibility = 'hidden';
+
+          // Remove marker selection
+          const marker = markers.find((marker, markerIdx) => locationIdx === markerIdx)
+          marker.setIcon(baseIcon);
+        }
+      }
 
       // Initialize marker icons
       const baseIcon = {
@@ -596,6 +637,7 @@
         )}
         `,
       };
+
 
       // Create a marker for each location.
       const infowindow = new google.maps.InfoWindow();
@@ -698,13 +740,18 @@
           }
 
           const resultSelectionHandler = function() {
-            selectResultItem(resultIndex, true, false);
+            selectResultItem(resultIndex, true, false, markers);
+          };
+
+          const resultLeaveHandler = function() {
+            leaveResultItem(resultIndex, true, false, markers);
           };
 
           // Clicking anywhere on the item selects this location.
           // Additionally, create a button element to make this behavior
           // accessible under tab navigation.
           item.addEventListener('mouseenter', resultSelectionHandler);
+          item.addEventListener('mouseleave', resultLeaveHandler);
           item.querySelector('.select-location')
                   .addEventListener('click', function(e) {
                     resultSelectionHandler();
@@ -738,17 +785,21 @@
           return;
         }
         locator.searchLocation = {'address': address, 'location': location};
+        const locationIcon = {
+          url: `data:image/svg+xml;utf-8,
+          ${encodeURIComponent(
+                  `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle opacity="0.2" cx="16" cy="16" r="16" fill="#0088FF"/>
+                  <circle cx="16" cy="16" r="11.5" fill="#0088FF" stroke="white" stroke-width="3"/>
+                </svg>`
+          )}
+        `,
+        };
         locator.searchLocationMarker = new google.maps.Marker({
           position: location,
           map: locator.map,
           title: 'My location',
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 12,
-            fillColor: '#3367D6',
-            fillOpacity: 0.5,
-            strokeOpacity: 0,
-          }
+          icon: locationIcon,
         });
 
         // Update the locator's idea of the user's country, used for units. Use
@@ -920,18 +971,6 @@
           },
           "placeId":"ChIJ3-ABRj-4woAR0Sz3BSwI57I"
         },
-        {"title":"CORE - Echo Park","address1":"2044 Reservoir St","address2":"Los Angeles, CA 90026, USA","coords":{"lat":34.07874527342286,"lng":-118.2621040932541},"placeId":"ChIJa7z1hxnHwoARwSTReKDCppw"},
-        {"title":"CORE - First United Methodist Church","address1":"1025 S Long Beach Blvd","address2":"Compton, CA 90221, USA","coords":{"lat":33.88710179655561,"lng":-118.20684176441803},"placeId":"ChIJ8Zl0sVjLwoARqjizxSEkpqQ"},
-        {"title":"CORE - LA Apparel Warehouse","address1":"1020 E 59th St","address2":"Los Angeles, CA 90001, USA","coords":{"lat":33.986893553859176,"lng":-118.25757990674592},"placeId":"ChIJyVXxEVTIwoAR4Qxiq9xg1ew"},
-        {"title":"FH - Jefferson","address1":"2920 W Jefferson Blvd","address2":"Los Angeles, CA 90018, USA","coords":{"lat":34.02550554014371,"lng":-118.32790803558197},"placeId":"ChIJ3-ABRj-4woAR0Sz3BSwI57I"},
-        {"title":"CORE - Echo Park","address1":"2044 Reservoir St","address2":"Los Angeles, CA 90026, USA","coords":{"lat":34.07874527342286,"lng":-118.2621040932541},"placeId":"ChIJa7z1hxnHwoARwSTReKDCppw"},
-        {"title":"CORE - First United Methodist Church","address1":"1025 S Long Beach Blvd","address2":"Compton, CA 90221, USA","coords":{"lat":33.88710179655561,"lng":-118.20684176441803},"placeId":"ChIJ8Zl0sVjLwoARqjizxSEkpqQ"},
-        {"title":"CORE - LA Apparel Warehouse","address1":"1020 E 59th St","address2":"Los Angeles, CA 90001, USA","coords":{"lat":33.986893553859176,"lng":-118.25757990674592},"placeId":"ChIJyVXxEVTIwoAR4Qxiq9xg1ew"},
-        {"title":"FH - Jefferson","address1":"2920 W Jefferson Blvd","address2":"Los Angeles, CA 90018, USA","coords":{"lat":34.02550554014371,"lng":-118.32790803558197},"placeId":"ChIJ3-ABRj-4woAR0Sz3BSwI57I"},
-        {"title":"CORE - Echo Park","address1":"2044 Reservoir St","address2":"Los Angeles, CA 90026, USA","coords":{"lat":34.07874527342286,"lng":-118.2621040932541},"placeId":"ChIJa7z1hxnHwoARwSTReKDCppw"},
-        {"title":"CORE - First United Methodist Church","address1":"1025 S Long Beach Blvd","address2":"Compton, CA 90221, USA","coords":{"lat":33.88710179655561,"lng":-118.20684176441803},"placeId":"ChIJ8Zl0sVjLwoARqjizxSEkpqQ"},
-        {"title":"CORE - LA Apparel Warehouse","address1":"1020 E 59th St","address2":"Los Angeles, CA 90001, USA","coords":{"lat":33.986893553859176,"lng":-118.25757990674592},"placeId":"ChIJyVXxEVTIwoAR4Qxiq9xg1ew"},
-        {"title":"FH - Jefferson","address1":"2920 W Jefferson Blvd","address2":"Los Angeles, CA 90018, USA","coords":{"lat":34.02550554014371,"lng":-118.32790803558197},"placeId":"ChIJ3-ABRj-4woAR0Sz3BSwI57I"},
       ],
       "mapOptions": {
         "center":{
@@ -957,13 +996,13 @@
     {{#each locations}}
       <li class="location-result" data-location-index="{{index}}">
         <div>
-          <button class="select-location">
-            <div class="name">{{title}}</div>
+          <div class="select-location">
+            <span class="name">{{title}}</span>
 <!--          <p>Closed Now</p>-->
-          </button>
             {{#if travelDistanceText}}
-              <div class="distance">{{travelDistanceText}}</div>
+              <span class="distance">{{travelDistanceText}}</span>
             {{/if}}
+          </div>
           <div class="address">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 3.25C8.27277 3.25 5.25 6.30149 5.25 10.0433C5.25 12.7826 6.82404 15.4408 8.32049 17.344C9.08066 18.3108 9.84813 19.1171 10.4442 19.6845C10.7419 19.968 11.0016 20.1963 11.2008 20.3579C11.2991 20.4376 11.3909 20.5079 11.47 20.5619C11.5081 20.5879 11.5559 20.6189 11.6074 20.6465C11.6327 20.6601 11.6717 20.6798 11.7193 20.6978C11.7518 20.7101 11.8589 20.75 12 20.75C12.1411 20.75 12.2482 20.7101 12.2807 20.6978C12.3283 20.6798 12.3673 20.6601 12.3926 20.6465C12.4441 20.6189 12.4919 20.5879 12.53 20.5619C12.6091 20.5079 12.7009 20.4376 12.7992 20.3579C12.9984 20.1963 13.2581 19.968 13.5558 19.6845C14.1519 19.1171 14.9193 18.3108 15.6795 17.344C17.176 15.4408 18.75 12.7826 18.75 10.0433C18.75 6.30149 15.7272 3.25 12 3.25ZM12 12.5833C10.5762 12.5833 9.41667 11.4238 9.41667 10C9.41667 8.57621 10.5762 7.41667 12 7.41667C13.4238 7.41667 14.5833 8.57621 14.5833 10C14.5833 11.4238 13.4238 12.5833 12 12.5833Z" stroke="#788697" stroke-width="1.5"/>
