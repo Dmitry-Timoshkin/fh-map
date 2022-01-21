@@ -55,13 +55,13 @@
 
     /* Adjust left list height to the map height */
     #locations-panel-list {
-      height: calc(100% - 22px);
+      height: calc(100% - 34px);
     }
     .results {
-      height: calc(100% - 22px);
+      height: calc(100% - 34px);
     }
     #location-results-list {
-      height: calc(100% - 22px);
+      height: calc(100% - 34px);
     }
 
     /* Responsive */
@@ -103,7 +103,7 @@
       #map {
         width: inherit;
       }
-      #location-results-list {
+      .results {
         width: 360px!important;
       }
     }
@@ -123,6 +123,10 @@
         margin-bottom: 12px;
       }
 
+      .results {
+        height: 520px;
+        width: 100%!important;
+      }
       #locations-panel {
         height: 520px;
         width: 100%!important;
@@ -197,6 +201,26 @@
       margin: 1.8em 0 1em 1.5em;
     }
 
+    #current-location {
+      margin: 4px 10px 0 10px;
+      padding: 6px 10px;
+      /* 14R */
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 20px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      /* Navi/300 */
+      color: #2F8FE3;
+      border-bottom: 1px solid #F0F2F6;
+    }
+    #current-location:hover {
+      background: #F7FAFF;
+      cursor: pointer;
+    }
+
     #locations-panel-list .location-result {
       position: relative;
       /*padding: 0.8em 1.4em 0.8em 1.4em;*/
@@ -205,7 +229,6 @@
       cursor: pointer;
 
       display: flex;
-      align-items: center;
     }
 
     #locations-panel-list .location-result:last-of-type {
@@ -224,6 +247,7 @@
       /*align-items: flex-start;*/
     }
 
+
     #locations-panel-list .location-result span.name {
       /* 20B */
       font-family: Gilroy, sans-serif;
@@ -238,17 +262,6 @@
       margin-right: 16px;
     }
 
-    #locations-panel-list div.select-location > span.distance {
-      display: inline-block;
-      width: max-content;
-      white-space: nowrap;
-      color: #F67760;
-      /* 14M */
-      font-style: normal;
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 20px;
-    }
 
     #locations-panel-list .location-result .address {
       display: flex;
@@ -294,25 +307,48 @@
       background: #EFF7FC;
     }
 
-    #locations-panel-list .location-result .distance {
-      /*position: absolute;*/
-      /*top: 0.9em;*/
-      /*right: 30%;*/
-      /*font-size: 0.9em;*/
-      /*text-align: center;*/
-      /*width: 5em;*/
+    .results {
+      /*margin: 0;*/
+      /*padding: 12px 12px 12px 10px;*/
+      border: 1px solid #CDD6E1;
+      box-sizing: border-box;
+      border-radius: 8px;
+      width: 480px;
+      /*overflow-y: auto;*/
     }
 
     #location-results-list {
       list-style-type: none;
       margin: 0;
       padding: 12px 12px 12px 10px;
-      border: 1px solid #CDD6E1;
+      /*border: 1px solid #CDD6E1;*/
       box-sizing: border-box;
-      border-radius: 8px;
+      /*border-radius: 8px;*/
 
-      width: 480px;
+      /*width: 480px;*/
       overflow-y: auto;
+    }
+
+    #locations-panel-list .location-result .miles-and-register {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-end;
+      /*min-height: 100%;*/
+    }
+
+    #locations-panel-list span.distance {
+      /*display: inline-block;*/
+      /*width: max-content;*/
+      /*white-space: nowrap;*/
+      color: #F67760;
+      /* 14M */
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 20px;
+
+      /*margin-bottom: 31px;*/
     }
 
     .preregister-btn {
@@ -321,9 +357,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 16px;
-      width: 85px;
-      height: 52px;
+      /*padding: 16px;*/
+      width: 95px;
+      height: 44px;
       /* 14B */
       font-style: normal;
       font-weight: bold;
@@ -355,7 +391,6 @@
       .preregister-btn {
         width: 48px;
         height: 48px;
-        padding: 0;
       }
       .preregister-long {
         display: none;
@@ -583,15 +618,11 @@
                           : marker.setIcon(baseIcon)
           )
           // marker.setIcon(activeIcon);
-          // console.log(markers);
-          // console.log(locator);
-          // console.log(locationIdx);
           // locator.map.panTo(locator.locations[locationIdx].coords);
         }
       };
 
       const leaveResultItem = function (locationIdx, panToMarker, scrollToResult, markers = null) {
-        console.log(locationIdx);
         if (markers && (locationIdx != null)) {
           // Remove element selection
           const locationElem = Array.from(resultsContainerEl.children)
@@ -608,34 +639,10 @@
 
       // Initialize marker icons
       const baseIcon = {
-        url: `data:image/svg+xml;utf-8,
-          ${encodeURIComponent(
-            `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <mask id="path-1-outside-1_16347_5420" maskUnits="userSpaceOnUse" x="4" y="0" width="24" height="32" fill="black">
-                    <rect fill="white" x="4" width="24" height="32"/>
-                    <path d="M26 12C26 23 17 30 16 30C15 30 6 22 6 12C6 6.47715 10.4772 2 16 2C21.5228 2 26 6.47715 26 12Z"/>
-                </mask>
-                <path class="map-pick" d="M26 12C26 23 17 30 16 30C15 30 6 22 6 12C6 6.47715 10.4772 2 16 2C21.5228 2 26 6.47715 26 12Z" fill="#0C385F"/>
-                <path d="M24 12C24 16.94 21.9787 21.0253 19.7827 23.9148C18.6872 25.3563 17.5714 26.4682 16.6969 27.2039C16.2573 27.5737 15.9011 27.8295 15.6594 27.9801C15.601 28.0165 15.5539 28.0438 15.5182 28.0634C15.5005 28.073 15.4868 28.0802 15.4768 28.0852C15.4719 28.0876 15.4681 28.0895 15.4655 28.0907C15.4629 28.0919 15.4617 28.0925 15.4617 28.0924C15.4618 28.0924 15.4635 28.0917 15.4668 28.0903C15.47 28.089 15.4752 28.0869 15.4823 28.0842C15.4956 28.0791 15.5201 28.0703 15.5544 28.0602C15.6027 28.0461 15.767 28 16 28V32C16.5119 32 16.9345 31.8155 17.0925 31.745C17.3239 31.6416 17.5557 31.5114 17.7742 31.3754C18.2161 31.1001 18.7271 30.7232 19.2719 30.2648C20.3661 29.3443 21.6878 28.0187 22.9673 26.3352C25.5213 22.9747 28 18.06 28 12H24ZM16 28C16.2703 28 16.4608 28.0611 16.5154 28.0793C16.5548 28.0924 16.5831 28.104 16.5988 28.1107C16.6149 28.1176 16.6237 28.1221 16.6245 28.1225C16.6249 28.1227 16.6075 28.1138 16.5704 28.0909C16.5343 28.0687 16.4866 28.0376 16.427 27.9961C16.1799 27.8238 15.8176 27.5342 15.3702 27.1224C14.4808 26.3035 13.3494 25.0884 12.2398 23.57C9.99942 20.5042 8 16.4146 8 12H4C4 17.5854 6.50058 22.4958 9.01022 25.93C10.2756 27.6616 11.5817 29.0715 12.661 30.0651C13.198 30.5595 13.7029 30.9731 14.1394 31.2774C14.3547 31.4275 14.587 31.5746 14.8213 31.6929C14.9679 31.767 15.4284 32 16 32V28ZM8 12C8 7.58172 11.5817 4 16 4V0C9.37258 0 4 5.37258 4 12H8ZM16 4C20.4183 4 24 7.58172 24 12H28C28 5.37258 22.6274 0 16 0V4Z" fill="white" mask="url(#path-1-outside-1_16347_5420)"/>
-                <circle cx="16" cy="12" r="6" fill="white"/>
-            </svg>`
-          )}
-        `,
+        url: 'icons/baseMarker.svg',
       };
       const activeIcon = {
-        url: `data:image/svg+xml;utf-8,
-          ${encodeURIComponent(
-                `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <mask id="path-1-outside-1_16347_5420" maskUnits="userSpaceOnUse" x="4" y="0" width="24" height="32" fill="black">
-                    <rect fill="white" x="4" width="24" height="32"/>
-                    <path d="M26 12C26 23 17 30 16 30C15 30 6 22 6 12C6 6.47715 10.4772 2 16 2C21.5228 2 26 6.47715 26 12Z"/>
-                </mask>
-                <path class="map-pick" d="M26 12C26 23 17 30 16 30C15 30 6 22 6 12C6 6.47715 10.4772 2 16 2C21.5228 2 26 6.47715 26 12Z" fill="#0088FF"/>
-                <path d="M24 12C24 16.94 21.9787 21.0253 19.7827 23.9148C18.6872 25.3563 17.5714 26.4682 16.6969 27.2039C16.2573 27.5737 15.9011 27.8295 15.6594 27.9801C15.601 28.0165 15.5539 28.0438 15.5182 28.0634C15.5005 28.073 15.4868 28.0802 15.4768 28.0852C15.4719 28.0876 15.4681 28.0895 15.4655 28.0907C15.4629 28.0919 15.4617 28.0925 15.4617 28.0924C15.4618 28.0924 15.4635 28.0917 15.4668 28.0903C15.47 28.089 15.4752 28.0869 15.4823 28.0842C15.4956 28.0791 15.5201 28.0703 15.5544 28.0602C15.6027 28.0461 15.767 28 16 28V32C16.5119 32 16.9345 31.8155 17.0925 31.745C17.3239 31.6416 17.5557 31.5114 17.7742 31.3754C18.2161 31.1001 18.7271 30.7232 19.2719 30.2648C20.3661 29.3443 21.6878 28.0187 22.9673 26.3352C25.5213 22.9747 28 18.06 28 12H24ZM16 28C16.2703 28 16.4608 28.0611 16.5154 28.0793C16.5548 28.0924 16.5831 28.104 16.5988 28.1107C16.6149 28.1176 16.6237 28.1221 16.6245 28.1225C16.6249 28.1227 16.6075 28.1138 16.5704 28.0909C16.5343 28.0687 16.4866 28.0376 16.427 27.9961C16.1799 27.8238 15.8176 27.5342 15.3702 27.1224C14.4808 26.3035 13.3494 25.0884 12.2398 23.57C9.99942 20.5042 8 16.4146 8 12H4C4 17.5854 6.50058 22.4958 9.01022 25.93C10.2756 27.6616 11.5817 29.0715 12.661 30.0651C13.198 30.5595 13.7029 30.9731 14.1394 31.2774C14.3547 31.4275 14.587 31.5746 14.8213 31.6929C14.9679 31.767 15.4284 32 16 32V28ZM8 12C8 7.58172 11.5817 4 16 4V0C9.37258 0 4 5.37258 4 12H8ZM16 4C20.4183 4 24 7.58172 24 12H28C28 5.37258 22.6274 0 16 0V4Z" fill="white" mask="url(#path-1-outside-1_16347_5420)"/>
-                <circle cx="16" cy="12" r="6" fill="white"/>
-            </svg>`
-        )}
-        `,
+        url: 'icons/activeMarker.svg',
       };
 
 
@@ -696,19 +703,19 @@
 
       // Get the distance of a store location to the user's location,
       // used in sorting the list.
-      const getLocationDistance = function(location) {
-        if (!locator.searchLocation) return null;
-
-        // Use travel distance if available (from Distance Matrix).
-        if (location.travelDistanceValue != null) {
-          return location.travelDistanceValue;
-        }
-
-        // Fall back to straight-line distance.
-        return google.maps.geometry.spherical.computeDistanceBetween(
-                new google.maps.LatLng(location.coords),
-                locator.searchLocation.location);
-      };
+      // const getLocationDistance = function(location) {
+      //   if (!locator.searchLocation) return null;
+      //
+      //   // Use travel distance if available (from Distance Matrix).
+      //   if (location.travelDistanceValue != null) {
+      //     return location.travelDistanceValue;
+      //   }
+      //
+      //   // Fall back to straight-line distance.
+      //   return google.maps.geometry.spherical.computeDistanceBetween(
+      //           new google.maps.LatLng(location.coords),
+      //           locator.searchLocation.location);
+      // };
 
       // Render the results list --------------------------------------------------
       const getResultIndex = function(elem) {
@@ -786,14 +793,7 @@
         }
         locator.searchLocation = {'address': address, 'location': location};
         const locationIcon = {
-          url: `data:image/svg+xml;utf-8,
-          ${encodeURIComponent(
-                  `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle opacity="0.2" cx="16" cy="16" r="16" fill="#0088FF"/>
-                  <circle cx="16" cy="16" r="11.5" fill="#0088FF" stroke="white" stroke-width="3"/>
-                </svg>`
-          )}
-        `,
+          url: 'icons/location.svg',
         };
         locator.searchLocationMarker = new google.maps.Marker({
           position: location,
@@ -816,6 +816,39 @@
 
         locator.updateTravelTimes();
       };
+
+
+      // Current location
+      const currentLocationBtn = document.getElementById('current-location');
+      currentLocationBtn.addEventListener('click', () => {
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+                  (position) => {
+                    const pos = {
+                      lat: position.coords.latitude,
+                      lng: position.coords.longitude,
+                    };
+                    updateSearchLocation('current location', pos);
+                    // infoWindow.setPosition(pos);
+                    // infoWindow.setContent("Location found.");
+                    // infoWindow.open(map);
+                    // map.setCenter(pos);
+                  },
+                  () => handleLocationError(true)
+          );
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false);
+        }
+      });
+      function handleLocationError(browserHasGeolocation) {
+        alert(
+                browserHasGeolocation
+                        ? "Error: The Geolocation service failed."
+                        : "Error: Your browser doesn't support geolocation."
+        );
+      }
 
       const geocodeSearch = function(query) {
         if (!query) {
@@ -882,6 +915,7 @@
 
       // Annotate travel times to the selected location using Distance Matrix.
       locator.updateTravelTimes = function() {
+        console.log(locator.searchLocation)
         if (!locator.searchLocation) return;
 
         const units = (locator.userCountry === 'USA') ?
@@ -919,75 +953,8 @@
       };
     }
   </script>
+  <script type="text/javascript" src="configuration.js"></script>
   <script>
-    const CONFIGURATION = {
-      "locations": [
-        {
-          "title":"CORE - Echo Park",
-          "address1":"2044 Reservoir St",
-          "address2":"Los Angeles, CA 90026, USA",
-          "vaccination": true,
-          "schedule": {
-            days: 'Mon - Sat',
-            hours: '8am-4pm'
-          },
-          "coords":{
-            "lat":34.07874527342286,
-            "lng":-118.2621040932541
-          },
-          "placeId":"ChIJa7z1hxnHwoARwSTReKDCppw"
-        },
-        {
-          "title":"CORE - First United Methodist Church",
-          "address1":"1025 S Long Beach Blvd",
-          "address2":"Compton, CA 90221, USA",
-          "mobile": true,
-          "schedule": {
-            days: 'Tue - Sat',
-            hours: '10am-6pm'
-          },
-          "coords":{
-            "lat":33.88710179655561,
-            "lng":-118.20684176441803
-          },
-          "placeId":"ChIJ8Zl0sVjLwoARqjizxSEkpqQ"
-        },
-        {
-          "title":"CORE - LA Apparel Warehouse",
-          "address1":"1020 E 59th St",
-          "address2":"Los Angeles, CA 90001, USA",
-          "coords":{
-            "lat":33.986893553859176,
-            "lng":-118.25757990674592},
-          "placeId":"ChIJyVXxEVTIwoAR4Qxiq9xg1ew"
-        },
-        {
-          "title":"FH - Jefferson",
-          "address1":"2920 W Jefferson Blvd",
-          "address2":"Los Angeles, CA 90018, USA",
-          "coords":{
-            "lat":34.02550554014371,
-            "lng":-118.32790803558197
-          },
-          "placeId":"ChIJ3-ABRj-4woAR0Sz3BSwI57I"
-        },
-      ],
-      "mapOptions": {
-        "center":{
-          "lat":38.0,
-          "lng":-100.0
-        },
-        "fullscreenControl":true,
-        "mapTypeControl":false,
-        "streetViewControl":false,
-        "zoom":4,
-        "zoomControl":true,
-        "maxZoom":17
-      },
-      "mapsApiKey": "AIzaSyChLRDowBBnYvY16Zl2hLsWatW6mcpsuuo"
-
-    };
-
     function initMap() {
       new LocatorPlus(CONFIGURATION);
     }
@@ -998,10 +965,6 @@
         <div>
           <div class="select-location">
             <span class="name">{{title}}</span>
-<!--          <p>Closed Now</p>-->
-            {{#if travelDistanceText}}
-              <span class="distance">{{travelDistanceText}}</span>
-            {{/if}}
           </div>
           <div class="address">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1023,10 +986,17 @@
           {{/if}}
           </div>
         </div>
-        <a class="preregister-btn" href="/">
-          <span class="preregister-long">Preregister</span>
-          <span class="preregister-short">+</span>
-        </a>
+        <div class="miles-and-register">
+          <span class="distance">
+            {{#if travelDistanceText}}
+              {{travelDistanceText}}
+            {{/if}}
+          </span>
+          <a class="preregister-btn" href={{preregisterLink}}>
+            <span class="preregister-long">Preregister</span>
+            <span class="preregister-short">+</span>
+          </a>
+        </div>
       </li>
     {{/each}}
   </script>
@@ -1057,6 +1027,12 @@
 <!--        All locations-->
 <!--      </div>-->
       <div class="results">
+        <div id="current-location">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3.25C8.27277 3.25 5.25 6.30149 5.25 10.0433C5.25 12.7826 6.82404 15.4408 8.32049 17.344C9.08066 18.3108 9.84813 19.1171 10.4442 19.6845C10.7419 19.968 11.0016 20.1963 11.2008 20.3579C11.2991 20.4376 11.3909 20.5079 11.47 20.5619C11.5081 20.5879 11.5559 20.6189 11.6074 20.6465C11.6327 20.6601 11.6717 20.6798 11.7193 20.6978C11.7518 20.7101 11.8589 20.75 12 20.75C12.1411 20.75 12.2482 20.7101 12.2807 20.6978C12.3283 20.6798 12.3673 20.6601 12.3926 20.6465C12.4441 20.6189 12.4919 20.5879 12.53 20.5619C12.6091 20.5079 12.7009 20.4376 12.7992 20.3579C12.9984 20.1963 13.2581 19.968 13.5558 19.6845C14.1519 19.1171 14.9193 18.3108 15.6795 17.344C17.176 15.4408 18.75 12.7826 18.75 10.0433C18.75 6.30149 15.7272 3.25 12 3.25ZM12 12.5833C10.5762 12.5833 9.41667 11.4238 9.41667 10C9.41667 8.57621 10.5762 7.41667 12 7.41667C13.4238 7.41667 14.5833 8.57621 14.5833 10C14.5833 11.4238 13.4238 12.5833 12 12.5833Z" stroke="#2F8FE3" stroke-width="1.5"/>
+          </svg>
+          <span>Use my current location</span>
+        </div>
         <ul id="location-results-list"></ul>
       </div>
     </div>
