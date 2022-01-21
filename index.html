@@ -13,17 +13,52 @@
       margin: 0;
       padding: 0;
     }
-
     .gm-style .gm-style-iw-c {
       padding: 0!important;
     }
-
     .gm-ui-hover-effect {
       display: none!important;
     }
-
     .gm-style-iw-d {
       overflow: unset!important;
+    }
+
+    .pac-container {
+      padding: 8px;
+      font-family: Gilroy, sans-serif;
+      /* 16R */
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 24px;
+      /* Coal/700 */
+      color: #29313A;
+      /* White/100 */
+      background: #FFFFFF;
+      /* Ash/250 */
+      border: 1px solid #F5F7F9;
+      box-sizing: border-box;
+      /* Elevation 24 */
+      box-shadow: 0 8px 24px rgba(36, 71, 123, 0.1);
+      border-radius: 4px;
+    }
+    .pac-container .pac-item {
+      display: flex;
+      align-items: center;
+      border: unset;
+      height: 24px;
+      padding: 12px 20px ;
+    }
+    .pac-container .pac-item:hover {
+      /* Ash/250 */
+      background: #F5F7F9;
+      border-radius: 4px;
+    }
+    .pac-icon {
+      display: none;
+    }
+    .pac-logo::after {
+      opacity: 0.3;
     }
 
     #map-container {
@@ -35,12 +70,10 @@
       box-sizing: border-box;
       padding: 20px 80px;
     }
-
     #map-container button {
       border: none;
       padding: 0;
     }
-
     #map {
       border-radius: 8px;
       margin-left: 12px;
