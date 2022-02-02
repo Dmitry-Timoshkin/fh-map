@@ -66,12 +66,16 @@
 
       const showInfoWindow = (locationIdx) => {
         const location = locator.locations[locationIdx];
+                // TODO: popup content code is repeated twice. Fix!
         infowindow.setContent(
                 `<div class="popup-dialog">
                       <div class="popup-title">${location.title}</div>
                       <div class="popup-address">${location.address1}</div>
                       <div class="popup-address">${location.address2}</div>
-                      <a class="popup-preregister-btn" href="/">Preregister</a>
+                      <div class="popup-working-datetime">
+                        ${location.schedule.days} ${location.schedule.hours}
+                      </div>
+                      <a class="popup-preregister-btn" href=${location.preregisterLink} target="_blank">Preregister</a>
                     </div>`
         );
         console.log(markers[locationIdx])
@@ -125,10 +129,10 @@
 
       // Initialize marker icons
       const baseIcon = {
-        url: 'icons/baseMarker.svg',
+        url: 'https://kadaniil.github.io/fh-map/icons/baseMarker.svg',
       };
       const activeIcon = {
-        url: 'icons/activeMarker.svg',
+        url: 'https://kadaniil.github.io/fh-map/icons/activeMarker.svg',
       };
 
 
@@ -156,7 +160,10 @@
                       <div class="popup-title">${location.title}</div>
                       <div class="popup-address">${location.address1}</div>
                       <div class="popup-address">${location.address2}</div>
-                      <a class="popup-preregister-btn" href="/">Preregister</a>
+                      <div class="popup-working-datetime">
+                        ${location.schedule.days} ${location.schedule.hours}
+                      </div>
+                      <a class="popup-preregister-btn" href=${location.preregisterLink} target="_blank">Preregister</a>
                     </div>`
           );
           infowindow.open({
@@ -277,7 +284,7 @@
         }
         locator.searchLocation = {'address': address, 'location': location};
         const locationIcon = {
-          url: 'icons/location.svg',
+          url: 'https://kadaniil.github.io/fh-map/icons/location.svg',
         };
         locator.searchLocationMarker = new google.maps.Marker({
           position: location,
@@ -476,7 +483,7 @@
               {{travelDistanceText}}
             {{/if}}
           </span>
-          <a class="preregister-btn" href={{preregisterLink}}>
+          <a class="preregister-btn" href={{preregisterLink}} target="_blank">
             <span class="preregister-long">Preregister</span>
             <span class="preregister-short">+</span>
           </a>
