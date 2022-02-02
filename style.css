@@ -94,7 +94,7 @@ body {
 }
 
 /* Responsive */
-@media only screen and (min-width: 2096px) {
+@media only screen and (min-device-width: 2096px) {
     #map-container {
         height: 1000px;
     }
@@ -103,7 +103,7 @@ body {
     }
 }
 
-@media only screen and (max-width: 2096px) {
+@media only screen and (max-device-width: 2096px) {
     #map-container {
         height: 840px;
     }
@@ -112,7 +112,7 @@ body {
     }
 }
 
-@media only screen and (max-width: 1760px) {
+@media only screen and (max-device-width: 1760px) {
     #map-container {
         height: 640px;
     }
@@ -121,7 +121,7 @@ body {
     }
 }
 
-@media only screen and (max-width: 1366px) {
+@media only screen and (max-device-width: 1366px) {
     #map-container {
         height: 520px;
     }
@@ -133,7 +133,7 @@ body {
     }
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-device-width: 800px) {
     #map-container {
         flex-direction: column-reverse;
         justify-content: flex-end;
@@ -412,7 +412,7 @@ body {
     display: none;
 }
 
-@media only screen and (max-width: 1366px) {
+@media only screen and (max-device-width: 1366px) {
     .preregister-btn {
         width: 48px;
         height: 48px;
