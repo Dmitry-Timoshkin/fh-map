@@ -68,8 +68,8 @@ const CONFIGURATION = {
             "address2":"Los Angeles, CA 90057, USA",
             "mobile": true,
             "schedule": {
-                days: 'Mon - Fri',
-                hours: '10am-4pm'
+                days: 'Tue & Fri only',
+                hours: '10am - 4pm'
             },
             "preregisterLink": "https://forms.flowhealth.com/access/core-mobile",
             "coords":{
@@ -132,8 +132,8 @@ const CONFIGURATION = {
             "address2":"Los Angeles, CA 90044, USA",
             "mobile": true,
             "schedule": {
-                days: 'Mon - Sat',
-                hours: '10am-4pm'
+                days: 'Wed only',
+                hours: '10am - 4pm',
             },
             "preregisterLink": "https://forms.flowhealth.com/access/core-mobile",
             "coords":{
