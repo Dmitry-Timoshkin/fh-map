@@ -173,6 +173,21 @@ const CONFIGURATION = {
             },
             "placeId":"?"
         },
+        {
+            "title":"(TEST)",
+            "address1":"Parking lot",
+            "address2":"Los Angeles, CA 91371, USA",
+            "schedule": {
+                days: 'Mon - Sat',
+                hours: '10am-10pm'
+            },
+            "preregisterLink": "https://forms.flowhealth.com/access/Core-PierceCollege",
+            "coords":{
+                "lat":34.1873702,
+                "lng":-118.5787023
+            },
+            "placeId":"?"
+        },
     ],
     "mapOptions": {
         "center":{
